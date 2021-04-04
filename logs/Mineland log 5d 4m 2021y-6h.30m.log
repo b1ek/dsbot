@@ -1,0 +1,5 @@
+INFO:root:Script started, libraries initializated...
+INFO:discord.client:logging in using static token
+INFO:discord.gateway:Shard ID None has sent the IDENTIFY payload.
+INFO:discord.gateway:Shard ID None has connected to Gateway: ["gateway-prd-main-v1jc",{"micros":56243,"calls":["discord-sessions-prd-2-20",{"micros":54858,"calls":["start_session",{"micros":44592,"calls":["api-prd-main-gf1w",{"micros":41937,"calls":["get_user",{"micros":4408},"add_authorized_ip",{"micros":1306},"get_guilds",{"micros":4916},"coros_wait",{"micros":1}]}]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":1383,"calls":[]}]}]}] (Session ID: e31a8af03cb283902189fe740a9e0e4b).
+INFO:root:Login successful! Bot token is ODIzMjM5MDk0NzI4NTIzNzg2.YFd7Jw.C0xK7GqZ_0hELtPqegdY-N-7v-0.
