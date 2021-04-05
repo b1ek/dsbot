@@ -43,7 +43,6 @@ async def log(log):
 @client.event
 async def on_ready(): # when log in
     print('Login successful! You logged in as {0.user}'.format(client)) # to console
-    await log('Бот залогинился')
 
 @client.event
 async def on_message(message):
@@ -55,11 +54,13 @@ async def on_message(message):
             await message.add_reaction(emoji=emoj1) # react with :+1:
             await message.add_reaction(emoji=emoj2) # heart
             await message.add_reaction(emoji=emoj3) # :-1:
+            await log('В мемах найден МЕМ, добавляю к нему кнопки.')
 
         else: # ELSE:
             if message.author.guild_permissions.administrator != True: # if author is not administrator:
                 await message.delete() # delete his fucking message without attachments
                 await message.author.send('К сожалению, в канал <#826670875839168523> вам можно отправлять только картинки, =(') # DM him
+                await log('В мемах найден ПРЕДАТЕЛЬ который не МЕМ. Удаляю его.')
 
             else: # if author has admin perm:
                 if respect_admin:
@@ -71,17 +72,24 @@ async def on_message(message):
                         await message.add_reaction(emoji=emoj1) # react with :+1:
                         await message.add_reaction(emoji=emoj2) # heart
                         await message.add_reaction(emoji=emoj3) # :-1:
+                        await log('В сообщениях найден АДМИН ПРЕДАТЕЛЬ который не МЕМ. Поскольку админы уважаются, добавляю к нему кнопки.')
                     else:
+                        await log('В сообщениях найден АДМИН ПРЕДАТЕЛЬ который не МЕМ. Поскольку админы уважаются, а он попросил кнопок не добавлять, я не буду.')
                         return
+                else:
+                    await log('В сообщениях найден АДМИН ПРЕДАТЕЛЬ который не МЕМ. Поскольку админы НЕ уважаются, удаляю его.')
+                    message.delete()
 
 
     if message.content.startswith(prefix): # command parser
-        print('Found command "{0.content}" from {0.author}'.format(message))
+        await log('Найдена команда: "{0.content}", от {0.author}'.format(message))
         cm = message.content # load message
         cmd = cm.split(str(prefix)) # remove message prefix
+        await log('Команда не распознана, поэтому отправлю ему в лс сообщение что она не распознана.')
+        await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
     else: # else
         return # do nothing
-    
+
 
 
 client.run('ODIzMjM5MDk0NzI4NTIzNzg2.YFd7Jw.C0xK7GqZ_0hELtPqegdY-N-7v-0')
