@@ -98,25 +98,31 @@ async def on_message(message):
     if message.author != client.user: 
         smislperc = perc(lambda x: x == " ", msg, 'смысола нет').ratio()
         antismislperc = perc(lambda x: x == " ", msg, 'смысол').ratio()
-    
-    else:
-        return
 
-    if smislperc < antismislperc:
+        if smislperc < 0.5:
 
-        for i in badwords:
+            for i in badwords:
 
-            smislperc += perc(lambda x: x == " ", msg, i).ratio()
+                smislperc += perc(lambda x: x == " ", msg, i).ratio()
 
-        for i in goodwords:
-
-            antismislperc += perc(lambda x: x == " ", msg, i).ratio()
+                if smislperc > 0.5:
+                    break
+                else:
+                    pass
+        else:
+            pass
 
 
     print(smislperc, ' ', antismislperc, ' ', smislperc+antismislperc)
-    if smislperc + antismislperc > 1.5:
+    if smislperc > 0.5:
         await log(f'Найден предатель который говорит что в названии нету смысла! Его сообщение: {message.content}, предатель: {message.author}. Содержание компромата: {smislperc}')
         await message.delete()
+
+
+
+
+
+
     else: # else
         return # do nothing
 # 4.08797729618163   2.090909090909091
