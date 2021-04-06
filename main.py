@@ -10,7 +10,9 @@ respect_admin = True
 emoj1 = '😁'
 emoj2 = '♥'
 emoj3 = '👎'
-badwords = ['смысла нет', 'смысола нет', 'в названии сервера нет смысла', 'смысла в сервере нет', 'smisla net', 'smi0l@ n3t', 'cмblc0л@ нет', 'cмblс0л@ |-|et', 'cмblс0л@ нet', 'cмblс0л@ net']
+badwords = ['смысла нет', 'смысола нет', 'в названии сервера нет смысла', 'смысла в сервере нет', 'smisla net', 'smi0l@ n3t', 'cмblc0л@ нет', 'cмblс0л@ |-|et', 'cмblс0л@ нet', 'cмblс0л@ net',
+    "в названии сервера нет смысла", "в н@3вании срва нт сммсла"]
+goodwords = ['смысл', 'сервер', 'нет', 'название', 'smisl', 'net', 'n3t']
 
 """END OF CONFIG"""
 
@@ -92,11 +94,33 @@ async def on_message(message):
         await log('Команда не распознана, поэтому отправлю ему в лс сообщение что она не распознана.')
         await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
     msg = message.content
-    smislperc = perc(lambda x: x == " ", msg, badwords).ratio()
-    if smislperc > 0.45: await log('Найден предатель который говорит что в названии нету смысла! Его сообщение: {0.content}, предатель: {0.author}.'.format(message)); await message.delete()
+
+    if message.author != client.user: 
+        smislperc = perc(lambda x: x == " ", msg, 'смысола нет').ratio()
+        antismislperc = perc(lambda x: x == " ", msg, 'смысол').ratio()
+    
+    else:
+        return
+
+    if smislperc < antismislperc:
+
+        for i in badwords:
+
+            smislperc += perc(lambda x: x == " ", msg, i).ratio()
+
+        for i in goodwords:
+
+            antismislperc += perc(lambda x: x == " ", msg, i).ratio()
+
+
+    print(smislperc, ' ', antismislperc, ' ', smislperc+antismislperc)
+    if smislperc + antismislperc > 1.5:
+        await log(f'Найден предатель который говорит что в названии нету смысла! Его сообщение: {message.content}, предатель: {message.author}. Содержание компромата: {smislperc}')
+        await message.delete()
     else: # else
         return # do nothing
-
+# 4.08797729618163   2.090909090909091
+# 0.9523809523809523 0.625
 
 
 client.run('ODIzMjM5MDk0NzI4NTIzNzg2.YFd7Jw.bIXDYCBLbAgzD_PxKBbwxKJUaTM')
