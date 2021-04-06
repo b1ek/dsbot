@@ -11,8 +11,7 @@ emoj1 = '😁'
 emoj2 = '♥'
 emoj3 = '👎'
 badwords = ['смысла нет', 'смысола нет', 'в названии сервера нет смысла', 'смысла в сервере нет', 'smisla net', 'smi0l@ n3t', 'cмblc0л@ нет', 'cмblс0л@ |-|et', 'cмblс0л@ нet', 'cмblс0л@ net',
-    "в названии сервера нет смысла", "в н@3вании срва нт сммсла"]
-goodwords = ['смысл', 'сервер', 'нет', 'название', 'smisl', 'net', 'n3t']
+    "в названии сервера нет смысла", "в н@3вании срва нт сммсла", 'CMblCJLA HETY', 'Сенсу немаэ']
 
 """END OF CONFIG"""
 
@@ -95,38 +94,29 @@ async def on_message(message):
         await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
     msg = message.content
 
-    if message.author != client.user: 
-        smislperc = perc(lambda x: x == " ", msg, 'смысола нет').ratio()
-        antismislperc = perc(lambda x: x == " ", msg, 'смысол').ratio()
+    global smislperc
+    smislperc = perc(lambda x: x == " ", msg, 'смысола нет').ratio()
 
-        if smislperc < 0.5:
+    if message.author == client.user: return
+    if smislperc < 0.5366672776333333333:
 
-            for i in badwords:
+        for i in badwords:
 
-                smislperc += perc(lambda x: x == " ", msg, i).ratio()
+            smislperc = perc(lambda x: x == " ", msg, i).ratio()
 
-                if smislperc > 0.5:
-                    break
-                else:
-                    pass
-        else:
-            pass
+            if smislperc > 0.5366672776333333333:
+                break
+
+            else:
+                pass
 
 
-    print(smislperc, ' ', antismislperc, ' ', smislperc+antismislperc)
-    if smislperc > 0.5:
-        await log(f'Найден предатель который говорит что в названии нету смысла! Его сообщение: {message.content}, предатель: {message.author}. Содержание компромата: {smislperc}')
+    if smislperc > 0.5366672776333333333:
+        await log(f'Найден предатель который говорит что в названии нету смысла! Его сообщение: **{message.content}**, предатель: **{message.author}**. %: **{round(smislperc * 100)}**')
         await message.delete()
-
-
-
-
-
-
     else: # else
         return # do nothing
-# 4.08797729618163   2.090909090909091
-# 0.9523809523809523 0.625
+
 
 
 client.run('ODIzMjM5MDk0NzI4NTIzNzg2.YFd7Jw.bIXDYCBLbAgzD_PxKBbwxKJUaTM')
