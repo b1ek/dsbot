@@ -10,12 +10,16 @@ respect_admin = True
 emoj1 = '😁'
 emoj2 = '♥'
 emoj3 = '👎'
+badwords = ['смысла нет', 'смысола нет', 'в названии сервера нет смысла', 'смысла в сервере нет', 'smisla net', 'smi0l@ n3t', 'cмblc0л@ нет', 'cмblс0л@ |-|et', 'cмblс0л@ нet', 'cмblс0л@ net']
+
 """END OF CONFIG"""
 
 print('Script initialized')
 
 """
 КОМАНДЫ БОТА
+
+'', 
 
 Бот, команды
 Бот, помощь
@@ -87,9 +91,12 @@ async def on_message(message):
         cmd = cm.split(str(prefix)) # remove message prefix
         await log('Команда не распознана, поэтому отправлю ему в лс сообщение что она не распознана.')
         await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
+    msg = message.content
+    smislperc = perc(lambda x: x == " ", msg, badwords).ratio()
+    if smislperc > 0.45: await log('Найден предатель который говорит что в названии нету смысла! Его сообщение: {0.content}, предатель: {0.author}.'.format(message)); await message.delete()
     else: # else
         return # do nothing
 
 
 
-client.run('ODIzMjM5MDk0NzI4NTIzNzg2.YFd7Jw.C0xK7GqZ_0hELtPqegdY-N-7v-0')
+client.run('ODIzMjM5MDk0NzI4NTIzNzg2.YFd7Jw.bIXDYCBLbAgzD_PxKBbwxKJUaTM')
