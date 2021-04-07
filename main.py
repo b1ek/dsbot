@@ -1,18 +1,16 @@
 import discord
 from datetime import date, datetime
 from difflib import SequenceMatcher as perc
+import config
 
 """CONFIG"""
-token = "ODIzMjM5MDk0NzI4NTIzNzg2.YFd7Jw.C0xK7GqZ_0hELtPqegdY-N-7v-0"
-prefix = 'Бот, '
-respect_admin = True
-# EMOJIS
-emoj1 = '😁'
-emoj2 = '♥'
-emoj3 = '👎'
-badwords = ['смысла нет', 'смысола нет', 'в названии сервера нет смысла', 'смысла в сервере нет', 'smisla net', 'smi0l@ n3t', 'cмblc0л@ нет', 'cмblс0л@ |-|et', 'cмblс0л@ нet', 'cмblс0л@ net',
-    "в названии сервера нет смысла", "в н@3вании срва нт сммсла", 'CMblCJLA HETY', 'Сенсу немаэ']
-
+token = config.token
+prefix = config.prefix
+respect_admin = config.respect_admin
+emoj1 = config.emoj1
+emoj2 = config.emoj2
+emoj3 = config.emoj3
+badwords = config.badwords
 """END OF CONFIG"""
 
 print('Script initialized')
@@ -59,7 +57,8 @@ async def on_message(message):
         await log('Команда не распознана, поэтому отправлю ему в лс сообщение что она не распознана.')
         await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
     
-    msg = ''.join(sorted(set(message.content), key=foo.index))
+    mmsg = str(message.content)
+    msg = ''.join(sorted(set(mmsg), key=mmsg.index))
 
     global smislperc
     smislperc = perc(lambda x: x == " ", msg, 'смысола нет').ratio()
