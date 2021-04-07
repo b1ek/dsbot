@@ -39,6 +39,9 @@ client = discord.Client() # init discord
 now = datetime.now() # получим время
 LOGname = str(''.join((str("Mineland log {}d {}m {}y-{}h.{}m".format(now.day, now.month, now.year, now.hour, now.minute)), ".log"))) # собрать название файла лога
 
+def upd_config():
+    import config
+
 async def log(log):
     logchannel = client.get_channel(828593536035061810)
     await logchannel.send(log)
@@ -54,6 +57,8 @@ async def on_message(message):
         await log('Найдена команда: "{0.content}", от {0.author}'.format(message))
         cm = message.content # load message
         cmd = cm.split(str(prefix)) # remove message prefix
+        if perc(lambda x: x == " ", cmd, 'обнови конфиг').ratio() > 0.8:
+            upd_config()
         await log('Команда не распознана, поэтому отправлю ему в лс сообщение что она не распознана.')
         await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
     
