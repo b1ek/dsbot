@@ -52,6 +52,36 @@ async def on_ready(): # when log in
 @client.event
 async def on_message(message):
 
+    if message.content.startswith(prefix): # command parser
+        await log('Найдена команда: "{0.content}", от {0.author}'.format(message))
+        cm = message.content # load message
+        cmd = cm.split(str(prefix)) # remove message prefix
+        await log('Команда не распознана, поэтому отправлю ему в лс сообщение что она не распознана.')
+        await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
+    msg = message.content
+
+    global smislperc
+    smislperc = perc(lambda x: x == " ", msg, 'смысола нет').ratio()
+
+    if message.author == client.user: return
+    if smislperc < 0.5366672776333333333:
+
+        for i in badwords:
+
+            smislperc = perc(lambda x: x == " ", msg, i).ratio()
+
+            if smislperc > 0.5366672776333333333:
+                break
+
+            else:
+                pass
+
+
+    if smislperc > 0.5366672776333333333:
+        await log(f'Найден предатель который говорит что в названии нету смысла! Его сообщение: **{message.content}**, предатель: **{message.author}**. %: **{round(smislperc * 100)}**')
+        await message.delete()
+
+    
     memes = client.get_channel(memeid) # get memes channel
     if message.channel == memes: # if message channel is memes channel
         if message.author.bot: return
@@ -86,34 +116,6 @@ async def on_message(message):
                     message.delete()
 
 
-    if message.content.startswith(prefix): # command parser
-        await log('Найдена команда: "{0.content}", от {0.author}'.format(message))
-        cm = message.content # load message
-        cmd = cm.split(str(prefix)) # remove message prefix
-        await log('Команда не распознана, поэтому отправлю ему в лс сообщение что она не распознана.')
-        await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
-    msg = message.content
-
-    global smislperc
-    smislperc = perc(lambda x: x == " ", msg, 'смысола нет').ratio()
-
-    if message.author == client.user: return
-    if smislperc < 0.5366672776333333333:
-
-        for i in badwords:
-
-            smislperc = perc(lambda x: x == " ", msg, i).ratio()
-
-            if smislperc > 0.5366672776333333333:
-                break
-
-            else:
-                pass
-
-
-    if smislperc > 0.5366672776333333333:
-        await log(f'Найден предатель который говорит что в названии нету смысла! Его сообщение: **{message.content}**, предатель: **{message.author}**. %: **{round(smislperc * 100)}**')
-        await message.delete()
     else: # else
         return # do nothing
 
