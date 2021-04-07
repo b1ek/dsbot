@@ -58,7 +58,8 @@ async def on_message(message):
         cmd = cm.split(str(prefix)) # remove message prefix
         await log('Команда не распознана, поэтому отправлю ему в лс сообщение что она не распознана.')
         await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
-    msg = message.content
+    
+    msg = ''.join(sorted(set(message.content), key=foo.index))
 
     global smislperc
     smislperc = perc(lambda x: x == " ", msg, 'смысола нет').ratio()
