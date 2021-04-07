@@ -5,10 +5,10 @@
 # Released under MIT license #
 # ========================== #
 import discord
-from datetime import date, datetime
+from datetime import time
 from difflib import SequenceMatcher as perc
 import config
-import sqlite3
+import json
 
 """CONFIG"""
 token = config.token
@@ -17,9 +17,100 @@ respect_admin = config.respect_admin
 emoj1 = config.emoj1
 emoj2 = config.emoj2
 emoj3 = config.emoj3
+smislwords = config.smislwords
 badwords = config.badwords
 pause = config.pause
 """END OF CONFIG"""
+
+""" JSON DB """
+
+def dbread():
+
+    """Read the database file.
+    Returns the database dict if everything's OK.
+    Returns "Database file corrupted" if database is not
+    a dict."""
+
+    with open("Database.json", "tr", encoding="utf-8") as f:
+
+        dataToLoad = json.load(f)
+        if type(dataToLoad) != dict:
+            f.close()
+            return "Database file corrupted"
+
+        else:
+            f.close()
+            if dataToLoad is {}: print('Warning: Database empty')
+            return dataToLoad
+
+database = dbread()
+
+def dbedit(userid, rep, xp, donate):
+    dbread()
+    ratings[userid] = {
+        "reputation": rep,
+        "xp": xp,
+        "donate": donate,
+        "lastbadword": time()
+    }
+    return True
+
+def dbquery(userid):
+    db = dbread()
+    user = db[userid]
+    if type(user) != dict:
+        return ratings[userid]
+
+database = dbread()
+
+
+'''    "469783042999844864": {
+        "reputation": 0,
+        "xp": 0,
+        "donate": 0,
+        "lastbadword": 0
+        }
+'''
+def reputation_processor(userid, usermessage):
+
+    user = dbquery(userid=userid)
+    isbadmessage = False
+
+    badperc = perc(lambda x: x == " ", usermessage, 'хуй').ratio()
+
+    if badperc < 0.5366672776333333333:
+
+        for i in badwords:
+
+            badperc = perc(lambda x: x == " ", usermessage, i).ratio()
+
+            if badperc > 0.5366672776333333333:
+                isbadmessage = True
+                user[lastbadword] = time()
+                user[reputation] += 0.00025
+
+            else:
+                pass
+
+    if user[lastbadword] > 7200:
+        user[reputation] += 0.001
+
+    elif user[lastbadword] < 7200:
+        user[reputation] -= 0.001
+
+    elif user[lastbadword] > 86400:
+        user[reputation] += 0.1
+
+    elif user[reputation] < -1:
+        useristoxic = True
+
+    if useristoxic:
+        return 2 # you have to ban him
+
+    if user[reputation] == 0 and user[xp] == 0 and user[lastbadword] == 0:
+        return 0 # no data in db
+        
+        
 
 print('Script initialized')
 
@@ -44,8 +135,6 @@ print(perc(lambda x: x == " ", "!помощь", "!по мощь").ratio())
 
 memeid = 826670875839168523 # meme channel id
 client = discord.Client() # init discord
-now = datetime.now() # получим время
-LOGname = str(''.join((str("Mineland log {}d {}m {}y-{}h.{}m".format(now.day, now.month, now.year, now.hour, now.minute)), ".log"))) # собрать название файла лога
 
 def upd_config():
     import config
@@ -70,7 +159,6 @@ async def on_message(message):
 
         if perc(lambda x: x == " ", cmd, 'обнови конфиг').ratio() > 0.8:
             if message.author.guild_permissions.administrator:
-                if config.pause: return
                 upd_config()
                 await log(f'Обновлен конифг по просьбе {message.author}')
                 await message.delete()
@@ -80,14 +168,13 @@ async def on_message(message):
 
 
         elif perc(lambda x: x == " ", cmd, 'помощь').ratio() < 0.8:
-            if config.pause: return
             await message.author.send('> **ПОМОЩЬ ПО КОМАНДАМ**\n\nПока что пуста, =(')
             return
 
-        elif perc(lambda x: x == " ", cmd, 'pause yourself').ratio() < 0.9:
-            pause = True
-        await log('Команда не распознана, поэтому отправлю ему в лс сообщение что она не распознана.')
-        await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
+        else:
+            await log('Команда не распознана, поэтому отправлю ему в лс сообщение что она не распознана.')
+            await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
+            return
     
     if config.pause: return
     else: pass
@@ -101,7 +188,7 @@ async def on_message(message):
     if message.author == client.user: return
     if smislperc < 0.5366672776333333333:
 
-        for i in badwords:
+        for i in smislwords:
 
             smislperc = perc(lambda x: x == " ", msg, i).ratio()
 
@@ -156,4 +243,4 @@ async def on_message(message):
 
 
 
-client.run('ODIzMjM5MDk0NzI4NTIzNzg2.YFd7Jw.bIXDYCBLbAgzD_PxKBbwxKJUaTM')
+client.run('ODIzMjM5MDk0NzI4NTIzNzg2.YFd7Jw.lvo9Ocf78PavSxkHouWnwXP3Maw')
