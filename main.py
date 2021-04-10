@@ -5,6 +5,12 @@
 # Released under MIT license #
 # ========================== #
 import discord
+import config
+import rep
+import threading
+from difflib import SequenceMatcher as perc
+import atexit
+import cmdproc
 
 """CONFIG"""
 token = config.token
@@ -59,58 +65,10 @@ async def on_ready(): # when log in
 @client.event
 async def on_message(message):
 
-
-    if message.content.startswith(prefix): # command parser
-
-        await log('Найдена команда: "{0.content}", от {0.author}'.format(message))
-        cm = message.content # load message
-        cmd = cm.split(str(prefix)) # remove message prefix
-
-        if perc(lambda x: x == " ", cmd, 'обнови конфиг').ratio() > 0.8:
-            if message.author.guild_permissions.administrator:
-                upd_config()
-                await log(f'Обновлен конифг по просьбе {message.author}')
-                await message.delete()
-                return
-            else:
-                await message.delete()
-
-
-        elif perc(lambda x: x == " ", cmd, 'помощь').ratio() < 0.8:
-            await message.author.send('> **ПОМОЩЬ ПО КОМАНДАМ**\n\nПока что пуста, =(')
-            return
-
-        else:
-            await log('Команда не распознана, поэтому отправлю ему в лс сообщение что она не распознана.')
-            await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
-            return
-    
-    if config.pause: return
-    else: pass
+    print('maen')
 
     mmsg = str(message.content)
     msg = ''.join(sorted(set(mmsg), key=mmsg.index))
-    '''
-    global smislperc
-    smislperc = perc(lambda x: x == " ", msg, 'смысола нет').ratio()
-
-    if message.author == client.user: return
-    if smislperc < 0.5366672776333333333:
-
-        for i in smislwords:
-
-            smislperc = perc(lambda x: x == " ", msg, i).ratio()
-
-            if smislperc > 0.5366672776333333333:
-                break
-
-            else:
-                pass
-
-
-    if smislperc > 0.5366672776333333333:
-        await log(f'Найден предатель который говорит что в названии нету смысла! Его сообщение: **{message.content}**, предатель: **{message.author}**. %: **{round(smislperc * 100)}**')
-        await message.delete()'''
     
     memes = client.get_channel(memeid) # get memes channel
     if message.channel == memes: # if message channel is memes channel
@@ -143,12 +101,52 @@ async def on_message(message):
                         return
                 else:
                     await log('В сообщениях найден АДМИН ПРЕДАТЕЛЬ который не МЕМ. Поскольку админы НЕ уважаются, удаляю его.')
-                    message.delete()
+                    await message.delete()
+
+    await cmdpars(message)
+    await rept(message)
 
 
-    else: # else
-        return # do nothing
+async def cmdpars(message):
+
+    print('cmdpars')
+
+    if message.content.startswith(prefix): # command parser
+
+        await log('Найдена команда: "{0.content}", от {0.author}'.format(message))
+        cm = message.content # load message
+        cmd = cm.split(str(prefix)) # remove message prefix
+
+        if perc(lambda x: x == " ", cmd, 'обнови конфиг').ratio() > 0.8:
+            if message.author.guild_permissions.administrator:
+                upd_config()
+                await log(f'Обновлен конифг по просьбе {message.author}')
+                await message.delete()
+                return
+            else:
+                await message.delete()
+
+
+        elif perc(lambda x: x == " ", cmd, 'помощь').ratio() < 0.8:
+            await message.author.send('> **ПОМОЩЬ ПО КОМАНДАМ**\n\nПока что пуста, =(')
+            return
+
+        else:
+            await log('Команда не распознана, поэтому отправлю ему в лс сообщение что она не распознана.')
+            await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
+            return
+
+    else:
+        return
+
+cmdparsthread = threading.Thread(target=rep)
+cmdparsthread.daemon = True
+cmdparsthread.start()
+
+repprocthread = threading.Thread(target=cmdproc)
+repprocthread.daemon = True
+repprocthread.start()
 
 
 
-client.run('ODIzMjM5MDk0NzI4NTIzNzg2.YFd7Jw.lvo9Ocf78PavSxkHouWnwXP3Maw')
+client.run('ODIzMjM5MDk0NzI4NTIzNzg2.YFd7Jw.P_a22iLB5mzoAan62y6H0dTHQNg')
