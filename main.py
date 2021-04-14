@@ -13,7 +13,6 @@ import atexit
 import cmdproc
 
 """CONFIG"""
-token = config.token
 prefix = config.prefix
 respect_admin = config.respect_admin
 emoj1 = config.emoj1
@@ -65,7 +64,9 @@ async def on_ready(): # when log in
 @client.event
 async def on_message(message):
 
-    print('maen')
+    if message.author == client.user: return
+    if message.channel == discord.channel.DMChannel: return
+    if message.channel == discord.channel.GroupChannel: return
 
     mmsg = str(message.content)
     msg = ''.join(sorted(set(mmsg), key=mmsg.index))
@@ -88,7 +89,7 @@ async def on_message(message):
             else: # if author has admin perm:
                 if respect_admin:
                     msg = message.content
-                    spl =  msg.split('==')
+                    spl = msg.split('==')
                     try:
                         spl[1]
                     except IndexError:
@@ -103,8 +104,12 @@ async def on_message(message):
                     await log('В сообщениях найден АДМИН ПРЕДАТЕЛЬ который не МЕМ. Поскольку админы НЕ уважаются, удаляю его.')
                     await message.delete()
 
-    await cmdpars(message)
-    await rept(message)
+    gg = await cmdpars(message)
+    if gg == 'exit': return
+
+    gg = await rep.repproc(message)
+    if gg == 'exit': return
+
 
 
 async def cmdpars(message):
@@ -122,31 +127,26 @@ async def cmdpars(message):
                 upd_config()
                 await log(f'Обновлен конифг по просьбе {message.author}')
                 await message.delete()
-                return
+                return 'exit'
             else:
                 await message.delete()
+        
+        if perc(lambda x: x == " ", cmd, 'иди нахуй').ratio() > 0.825: # :D
+            message.channel.send(f'<@{message.author.id}>, сам иди нахуй')
+            return 'exit'
 
 
-        elif perc(lambda x: x == " ", cmd, 'помощь').ratio() < 0.8:
+        if perc(lambda x: x == " ", cmd, 'помощь').ratio() < 0.8:
             await message.author.send('> **ПОМОЩЬ ПО КОМАНДАМ**\n\nПока что пуста, =(')
-            return
+            return 'exit'
 
         else:
             await log('Команда не распознана, поэтому отправлю ему в лс сообщение что она не распознана.')
             await message.author.send('Ваша команда не распознана! Используйте `Бот, команды`, чтобы посмотреть список команд!')
-            return
 
     else:
-        return
-
-cmdparsthread = threading.Thread(target=rep)
-cmdparsthread.daemon = True
-cmdparsthread.start()
-
-repprocthread = threading.Thread(target=cmdproc)
-repprocthread.daemon = True
-repprocthread.start()
+        return None
 
 
 
-client.run('ODIzMjM5MDk0NzI4NTIzNzg2.YFd7Jw.P_a22iLB5mzoAan62y6H0dTHQNg')
+client.run(config.token)
